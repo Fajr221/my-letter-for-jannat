@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our Memories</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0c1f3f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 2.5s ease, opacity 2s ease;
+      opacity: 1;
+    }
+
+    #contentWrapper {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      opacity: 1;
+      transition: opacity 1.5s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #startScreen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #0c1f3f;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 0.7s ease;
+      width: 100%;
+    }
+    #startScreen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #startText {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      white-space: nowrap;
+      text-align: center;
+      max-width: 90vw;
+      line-height: 1.3;
+      opacity: 0;
+      animation: fadeInText 1.5s forwards;
+    }
+    @keyframes fadeInText {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .play-button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #1DB954;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(29, 185, 84, 0.5);
+      opacity: 0; /* initially hidden */
+      transition: opacity 0.7s ease;
+    }
+    .play-button.show {
+      opacity: 1 !important;
+    }
+    .play-button svg {
+      fill: white;
+      width: 22px;
+      height: 22px;
+      margin-left: 3px;
+    }
+
+    /* spotify-header styles unchanged */
+    .spotify-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 30px auto 0;
+      background-color: #182c4e;
+      padding: 8px 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0;
+      transform-origin: center;
+      transform: scale(0.9);
+      transition: background-color 2.5s ease, opacity 0.7s ease, transform 0.7s ease;
+      display: none;
+    }
+    .spotify-header.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .spotify-header img {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .song-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .song-info a,
+    .song-info span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      color: #1DB954;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .song-info span {
+      color: #a8d5a3;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+
+    #memories {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 90%;
+      max-width: 700px;
+      margin-top: 40px;
+      opacity: 0;
+      transform-origin: center;
+      transform: scale(0.9);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    #memories.show {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .memories-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+    }
+
+    .arrow {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%) scale(0.9);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      transition: background-color 2.5s ease, opacity 0.7s ease, transform 0.7s ease;
+      user-select: none;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      z-index: 10;
+    }
+
+    .arrow.show {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+
+    .arrow:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .left {
+      left: -60px;
+    }
+
+    .right {
+      right: -60px;
+    }
+
+    .arrow svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+      pointer-events: none;
+    }
+
+    .image-section {
+      flex-shrink: 0;
+      max-width: 100%;
+      position: relative;
+    }
+
+    .image-section img {
+      max-width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transition: opacity 1500ms ease;
+      opacity: 1;
+      object-fit: cover;
+      max-height: 500px;
+      user-select: none;
+      pointer-events: auto;
+    }
+
+    .separator {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      width: 80%;
+      margin: 30px 0;
+      opacity: 0;
+      transition: opacity 1500ms ease;
+    }
+    .separator.show {
+      opacity: 1;
+    }
+
+    .paragraph {
+      max-width: 700px;
+      padding: 0 20px;
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.6;
+      color: #dbe4f0;
+      opacity: 0;
+      transition: opacity 1500ms ease;
+    }
+    .paragraph.show {
+      opacity: 1;
+    }
+
+    /* Flower surprise iframe styles */
+    #flowerSurprise {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.5s ease;
+      z-index: 9999;
+    }
+    #flowerSurprise.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* FINAL SCREEN - updated as requested */
+    #finalScreen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #000000; /* pure black */
+      color: white;
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 2s ease;
+      z-index: 10000;
+      user-select: none;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    #finalScreen.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #finalScreen .subtext {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.25rem;
+      margin-top: 0.5rem;
+      font-weight: normal;
+      color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <div id="contentWrapper">
+    <div id="startScreen">
+      <div id="startText">To feel this moment fully, Jannat, tap the music first ♡</div>
+      <div id="playBtn" class="play-button" title="Play Music">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+    </div>
+
+    <div class="spotify-header" id="spotifyHeader">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify" />
+      <div class="song-info">
+        <a href="https://open.spotify.com/track/5ZtZ2xYkA8dp5hGOLAG3JZ?si=5f7aa9eaffb04846" target="_blank" rel="noopener noreferrer">Beanie</a>
+        <span>Chezile</span>
+      </div>
+    </div>
+
+    <audio id="audioPlayer" loop>
+      <source src="https://www.dropbox.com/scl/fi/xivcw7m7k0n5w268ce720/Beanie-Slowed.mp3?rlkey=sdcvpv45nidje01xgp756j45v&st=9gadilw5&dl=1" type="audio/mpeg" />
+      Your browser does not support the audio tag.
+    </audio>
+
+    <div id="memories">
+      <div class="memories-container">
+        <div class="arrow left" onclick="prevImage()" aria-label="Previous Image" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+        </div>
+        <div class="image-section">
+          <img id="memoryImage" src="" alt="Memory" />
+        </div>
+        <div class="arrow right" onclick="nextImage()" aria-label="Next Image" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="separator"></div>
+      <div class="paragraph" id="caption"></div>
+    </div>
+  </div>
+
+  <!-- Flower Surprise Section -->
+  <iframe id="flowerSurprise" src="flowers/index.html" frameborder="0"></iframe>
+
+  <!-- FINAL SCREEN - updated -->
+  <div id="finalScreen" aria-live="polite" role="alert" tabindex="0">
+    The end of our beautiful story ,
+    <div class="subtext">(those flowers are for u , since u can't go out with me)</div>
+  </div>
+
+  <script>
+    // Your original JS unchanged except for nextImage() function extended
+    const playBtn = document.getElementById('playBtn');
+    const audio = document.getElementById('audioPlayer');
+    const startScreen = document.getElementById('startScreen');
+    const memories = document.getElementById('memories');
+    const spotifyHeader = document.getElementById('spotifyHeader');
+    const memoryImage = document.getElementById('memoryImage');
+    const caption = document.getElementById('caption');
+    const separator = document.querySelector('.separator');
+    const arrows = document.querySelectorAll('.arrow');
+    const flowerFrame = document.getElementById('flowerSurprise');
+    const contentWrapper = document.getElementById('contentWrapper');
+    const finalScreen = document.getElementById('finalScreen');
+
+    const images = [
+      "https://i.ibb.co/LhtL7Kbk/Whats-App-Image-2025-08-02-at-2-29-58-PM.jpg",
+      "https://i.ibb.co/q3tk66vg/e7bcf3ab-6850-4fe8-9828-5abd82d551ef.jpg",
+      "https://i.ibb.co/rKpF6sTD/Whats-App-Image-2025-08-02-at-2-29-57-PM-5.jpg",
+      "https://i.ibb.co/bjkcBDVJ/Whats-App-Image-2025-08-02-at-2-29-57-PM-4.jpg",
+      "https://i.ibb.co/DHXS55mp/Whats-App-Image-2025-08-02-at-2-29-57-PM-3.jpg",
+      "https://i.ibb.co/pj0R5kwX/Whats-App-Image-2025-08-02-at-2-29-56-PM-6.jpg",
+      "https://i.ibb.co/GvfM950C/Whats-App-Image-2025-08-02-at-2-29-56-PM-3.jpg",
+      "https://i.ibb.co/BHs9sVHQ/Whats-App-Image-2025-08-02-at-2-29-55-PM-1.jpg",
+      "https://i.ibb.co/fzLYQLRK/Whats-App-Image-2025-08-02-at-2-29-54-PM.jpg",
+      "https://i.ibb.co/N61Gb9BS/Whats-App-Image-2025-08-02-at-2-29-35-PM-1.jpg",
+      "https://i.ibb.co/WNmkr0D5/Whats-App-Image-2025-08-02-at-2-29-35-PM.jpg",
+      "https://i.ibb.co/Lh63VKMT/Whats-App-Image-2025-08-03-at-6-18-25-PM.jpg",
+      "https://i.ibb.co/B5jKGVWC/Whats-App-Image-2025-08-03-at-6-18-25-PM-1.jpg",
+      "https://i.ibb.co/DfbFdJdx/Whats-App-Image-2025-08-03-at-6-18-24-PM.jpg",
+      "https://i.ibb.co/0Rw8FTrp/Whats-App-Image-2025-08-03-at-6-19-19-PM.jpg"
+    ];
+
+    const captions = [
+      "Our first eyecontact , ykhh xhal cute baqi kan3ql nzltiha story wja wrahali islam w trtt blfrha o wahd nhar drti initial q fnote yaah ela xo3or xhal wa3r asahbi ",
+      "Ahsan couple ftariiiikhh , nhar khl3atna ostada dlongli asahbii",
+      "Hhhhh yamat mdrassa fax kona kanjiw bjouuj ftriq katwslni ldar A77 princess treatment (mxya dyalk cute)",
+      "Hhhhhhh 3qalti fax jat 3andna akhra qaltlna rah sawrokom wqoltili wax kat3rfa wqoltlk lae wqoltlk wax kat3rfa wqolti lae htanti hhhhhhh",
+      "O hadi dakhl lmdrasa hhhh kona labsin fhal fhal o kant xta wkda ykhhh ela ayamat , xof xkon morak hhhh ur fav teacher li 3ziiiz 3lik ",
+      "Hayhayhay 3la l7tot lmla7 , konti mnowra mdrassa qoli",
+      "Waa xhal cute fok u ",
+      "My favourite spot , t3qal fax jat 3andk leila hhhhhh mskina jannat , tma konti katwrini kifax n7assn",
+      "Hadii nhar lmasra7 o sowarta bla khbark dahaktini konti maxa w scarf foq rask jiti fhal batman ",
+      "BOOOOOOOOOOM SHAKAAAALAAAKAA , 3la qoxa3rira kant jatni fax hbti mn taxi ykhhh waa3raaa",
+      "And this is our oldest photoo tgtrrr",
+      "Xta o jannat hdaya xbaghi ktar mn hadxi",
+      "Borachooo, nsit xno konti qoltili bax bant hxman fhal haka",
+      "Hada li sowar had tswiraa waa3r ,rmdan w7na galsin fdroj kankhrjo pc tgtr hhhhh",
+      "Bghit nsali with my favourite pic of u , fxklll had mara khalitini nxbarlk tel o tqti fiya , kifax bghitini manbqaax nhdr m3a wahda with that beauty mashaallah xo xhal 3aynk zwinin eyebrows mouth nose wakha mghatyahom skin o khososan xda dyal x3ar wili xhal jatk wa3ra asahbi "
+    ];
+
+    const bgColors = [
+      "#0c1f3f", "#5a1a1a", "#1a2e2b", "#3b1e24", "#14212d",
+      "#2a2723", "#1e352e", "#261a1f", "#153029",
+      "#301b1e", "#1a2433", "#213026", "#3b2221",
+      "#162d32", "#0c1f3f"
+    ];
+
+    let current = 0;
+    const fadeDuration = 1500; // 1.5 seconds for fade animation
+
+    function changeBackgroundColor(color) {
+      document.body.style.backgroundColor = color;
+      spotifyHeader.style.backgroundColor = color;
+      arrows.forEach(arrow => arrow.style.backgroundColor = color);
+    }
+
+    function fadeOutInUpdate() {
+      memoryImage.style.transition = `opacity ${fadeDuration}ms ease`;
+      caption.style.transition = `opacity ${fadeDuration}ms ease`;
+      separator.style.transition = `opacity ${fadeDuration}ms ease`;
+
+      memoryImage.style.opacity = 0;
+      caption.style.opacity = 0;
+      separator.style.opacity = 0;
+
+      setTimeout(() => {
+        memoryImage.src = images[current];
+        caption.textContent = captions[current];
+
+        changeBackgroundColor(bgColors[current]);
+
+        memoryImage.style.opacity = 1;
+        caption.style.opacity = 1;
+        separator.style.opacity = 1;
+      }, fadeDuration);
+    }
+
+    function nextImage() {
+      if (current === images.length - 1) {
+        arrows.forEach(arrow => {
+          arrow.style.transition = `opacity ${fadeDuration}ms ease`;
+          arrow.style.opacity = '0';
+        });
+        spotifyHeader.style.transition = `opacity ${fadeDuration}ms ease`;
+        spotifyHeader.style.opacity = '0';
+
+        contentWrapper.style.transition = `opacity ${fadeDuration}ms ease`;
+        contentWrapper.style.opacity = '0';
+
+        document.body.style.transition = `background-color 2.5s ease`;
+        document.body.style.backgroundColor = '#000';
+
+        setTimeout(() => {
+          flowerFrame.style.transition = 'opacity 1.5s ease';
+          flowerFrame.classList.add('show');
+        }, 2500);
+
+        // After flower surprise shows for 8 seconds, fade it out and show final screen
+        setTimeout(() => {
+          flowerFrame.classList.remove('show');
+
+          // Show final screen fade in
+          finalScreen.classList.add('show');
+          finalScreen.focus();
+        }, 2500 + 8000); // 2.5s delay + 8s surprise
+
+        return;
+      }
+      current = (current + 1) % images.length;
+      fadeOutInUpdate();
+    }
+
+    function prevImage() {
+      if (current === 0) return;
+      current--;
+      fadeOutInUpdate();
+    }
+
+    function onPlayClick() {
+      audio.play();
+      playBtn.style.pointerEvents = 'none';
+      playBtn.style.opacity = '0';
+
+      startScreen.classList.add('hide');
+
+      spotifyHeader.style.display = 'inline-flex';
+      setTimeout(() => spotifyHeader.classList.add('show'), 100);
+
+      memories.style.opacity = '1';
+      memories.classList.add('show');
+
+      arrows.forEach(arrow => {
+        arrow.style.opacity = '1';
+        arrow.classList.add('show');
+      });
+
+      fadeOutInUpdate();
+    }
+
+    playBtn.addEventListener('click', onPlayClick);
+
+    arrows.forEach(arrow => {
+      arrow.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          arrow.click();
+        }
+      });
+    });
+
+    // Show play button after title fade-in
+    window.onload = () => {
+      setTimeout(() => {
+        playBtn.classList.add('show');
+      }, 1900); // 1.5s fade + 400ms delay
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>One more chance?</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&family=Segoe+UI:wght@700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* --- General body styles --- */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1efeb;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+      position: relative;
+    }
+
+    /* --- First Page container --- */
+    #firstPage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      background-color: #f1efeb;
+      position: absolute;
+      top: 0; left: 0;
+      transition: opacity 1.5s ease;
+      z-index: 10;
+      opacity: 0;
+    }
+    #firstPage.fade-in {
+      opacity: 1;
+    }
+    #firstPage.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    h1 {
+      font-family: 'MonteCarlo', cursive;
+      font-size: 4.8rem;
+      color: #5b3e37;
+      letter-spacing: 1px;
+      margin: 0 0 30px 0;
+      position: relative;
+      z-index: 11;
+    }
+    .buttons {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      z-index: 11;
+      position: relative;
+    }
+    button {
+      padding: 14px 35px;
+      font-size: 24px;
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: width 0.3s ease, background-color 0.3s ease, font-size 0.3s ease;
+    }
+    .yes-button {
+      background-color: #9dcebc;
+      color: #2f4738;
+    }
+    .yes-button:hover {
+      background-color: #8fbbaa;
+    }
+    .no-button {
+      background-color: #f5c7c3;
+      color: #8a4a48;
+      height: 54px;
+      line-height: 20px;
+      text-align: center;
+      overflow: visible;
+    }
+    .no-button:hover {
+      background-color: #eeb8b3;
+    }
+    /* Heart animation */
+    .heart-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .heart {
+      position: absolute;
+      bottom: -50px;
+      width: 20px;
+      height: 18px;
+      background-color: #ff6b81;
+      transform: rotate(-45deg);
+      animation: floatUp 5s linear infinite;
+      opacity: 0.7;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 18px;
+      background-color: #ff6b81;
+      border-radius: 50%;
+    }
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+    .heart::after {
+      left: 10px;
+      top: 0;
+    }
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(-45deg);
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-400px) rotate(-45deg);
+        opacity: 0;
+      }
+    }
+
+    /* --- Second Page --- */
+    #secondPage {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: #001f33;
+      color: white;
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 2s ease;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow: hidden;
+      user-select: none;
+      z-index: 20;
+    }
+    #secondPage.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .title {
+      font-family: 'MonteCarlo', cursive;
+      font-size: 80px;
+      color: #fff;
+      margin: 0 0 15px 0;
+      opacity: 0;
+      transform: translateY(-30px);
+      transition: opacity 3.5s ease, transform 3.5s ease;
+      user-select: none;
+    }
+    .title.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .content {
+      max-width: 800px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      padding: 40px;
+      overflow-y: auto;
+      max-height: 60vh;
+      background: rgba(0, 31, 51, 0.9);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 0 30px rgba(0, 31, 51, 1);
+      color: white;
+      user-select: text;
+      text-align: left;
+      position: relative;
+    }
+    .dear-line {
+      font-family: 'MonteCarlo', cursive;
+      font-size: 36px;
+      color: white;
+      opacity: 0;
+      transform: translateX(-30px);
+      transition: opacity 3.5s ease, transform 3.5s ease;
+      margin-bottom: 15px;
+      user-select: none;
+    }
+    .dear-line.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .line {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+      font-size: 22px;
+      line-height: 1.6;
+      user-select: text;
+      color: white;
+      white-space: pre-wrap;
+    }
+    .line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Inviting sentence */
+    .invite-text {
+      font-family: 'Quicksand', sans-serif; 
+      font-size: 1.9rem; 
+      color: #a3d2ca;  /* cool soft teal */
+      margin-top: 40px; 
+      text-align: center; 
+      font-style: italic; 
+      text-shadow: 0 0 10px rgba(163, 210, 202, 0.8);
+      user-select: none;
+    }
+
+    /* Stylish comfy marine blue button */
+    .memories-button-container {
+      text-align: center; 
+      margin-top: 25px;
+      user-select: none;
+    }
+    .memories-button {
+      padding: 16px 48px;
+      font-size: 22px;
+      border-radius: 40px;
+      background: linear-gradient(135deg, #26547c, #1b3a57);
+      color: #c6f9f1;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(38, 84, 124, 0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 600;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .memories-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(38, 84, 124, 0.9);
+    }
+
+    /* --- Softer, comfy scrollbar styling for .content --- */
+    .content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+      background: #557a95; /* muted marine blue */
+      border-radius: 12px;
+      border: 2px solid transparent; /* slight padding effect */
+      box-shadow: none; /* remove glow */
+      transition: background-color 0.3s ease;
+    }
+
+    .content::-webkit-scrollbar-thumb:hover {
+      background-color: #7a9bb8; /* lighter muted blue on hover */
+      box-shadow: none;
+    }
+
+    /* Firefox */
+    .content {
+      scrollbar-width: thin;
+      scrollbar-color: #557a95 transparent;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- First Page -->
+  <div id="firstPage" aria-label="Welcome page with question">
+    <h1>One More Chance?</h1>
+    <div class="buttons">
+      <button class="yes-button" aria-label="Yes button">Yes</button>
+      <button class="no-button" aria-label="No button">No</button>
+    </div>
+    <div class="heart-container" aria-hidden="true"></div>
+  </div>
+
+  <!-- Second Page -->
+  <div id="secondPage" role="main" aria-label="Letter to Jannat" tabindex="0" >
+    <div class="title" id="mainTitle">To Jannat</div>
+    <div class="content" id="content" tabindex="0" role="region" aria-label="Letter content">
+      <div class="dear-line" id="dearLine">Sba3 dyali Jannita,</div>
+      <div class="line" id="fullParagraph">
+Hey Jannat, bima anaho dazo ktar mn 2 weeks fblast simana and ig bli tsalat regla o safi waqila takhdti lqarar dyalk and u didn't choose me unfortunately, sooo tbh i enjoyed making this for you and my feelings were mixed between sadness, joy, missing, and hope. I had been planning this for a long time and finally haqqt had l2injaz, wakha may3jbkx but at least m proud of what i did, anyway, i just want to tell u that i've read your message over and over again literally every night before sleep, mabqitx kanxof lamakla lan3as, jannat u were my life and every decision i took kankon txawrt m3ak fih, i kinda miss our memories tgtr, i kinda miss the way u looked at me b4, twahxt nbqa n3as wnti msardali a looooooong good night saying that u love me, twahxt nbqa nxofk kol nhar fmdrassa, twahxt nbqa nhdar meak kol nhar, twahxtk fax kadhak ela nokati lmodhikati jidan hhhh wla fax kandrb xi thsina hiya hadik wla t3qli fax bghitii tartaq bdahk nhar 3awdtlk 3la walid nariiii 3omri nsa dak nhar aktar nhar dhakti fih, twaaahxtk tqrsnii wdrbni wfax nrja3 ldar nwrik la7mi zarqa bsbabk hhhhhhhhhhh, wla fax kantsnaw ba3dna fstiiira7a wla fax kankono kharjin ah o t3qal nhar bdlo sti3mal zaman wt3sbtii ykhhh xhal cute, wla fax maslmx elik ostad dyal txkiliya wslm eliya ghi ana wt3sbti hhhhh, ah hhhhhhhhhh o t3qal nhar drbtiniiii bjhhhd ldhri wtkhl3tii hhhhhhhh, wla fax makt3rfx trbt khyot nariii ela moments xhal twhxtom bzaaf ktar mli katkhayl wlah,twahxt n3anqk, twahxtk fax katji tqoli xrahli lmaths, twahxt mli tji tqoli asrar kholod whabsaya, tawhxt fax konti katqdr tbki qodami, twahxt fax mxina nhfdo fronsi fspot, twahxt fax konti katji tqoli bli nti a3la noqta f fr w ar, twahxtk fax kont kantfrj fik mn sarjm fax konti katl3ab riyada, twahxt fax konti kat3asb mli kanjbdlk xi bnt akhra wla fax khditi stylo mn ydi hitax 3tatoli siham, twahxt fax konti kat3awdli 3la minecraft hhhh o fax kant kat3sbk, twahxt nfiq 3la gm dyalk twahxt ur silly audios, twahxt yamat rmdan fax konti katqabl nouran, twahxt nhar konti katsardli reels dyal roblox o qisas ghir bax ntwlo convo onjbdo xi mawdo3, hhhhh twahxt nsardlk vids dyal khawf, tfuuu kanktb hadxi wkanbki, twahxtk fax konti katreposti 3liya wla tsardli vids ftik o njawbk 3lihom A3333 take me baaack wlaaah hta ahsan 3am dwzto m3ak ajannat fhyati it was full of hugs, joy and happiness  ,and the last thing i ever imagined was losing you jannat and it broke my heart to realize that u preferred three weeks of fun with your friends over everything we've built tgtr since 2023 and what breaks me even more is how easily you can go out with your guy friends lb7ar wla thdr m3ahom fax tlaqahom, while i was struggling just to see you for a few seconds, even though i've tried to forget you by spending time with my friends, it only made the pain heavier. I can't move on i can't even talk to another girl the way i talked to you, hta wahhdd makifhm lhumor dyali wla kifax kanfkr qadkkk. I became so attached to you, it's like no one else feels right anymore. No one can ever replace you, Jannat. I don't want someone new i don't want friendgroup. I WANT YOU. The way you made me feel, the way you cared about me even though lately u left me on delievered so many times and everytime i try to keep our chat alive, trying to come up with any topic just to feel close to u, and when i got sick o maswltix fiya ghda, it feels like you don't even care, and also the connection we had it was rare, real, unforgettable, o bghitini nkhsrk bhad sohola ? rah l3xra dyal 3 snin o zyada hhhh wlit kan3tabrk fhal sahbi and my lover at the same, you're my first love o htana m ur 1st everything, ma3omri tqt fxi wahd fhalk nti o baqi ldaba kantiq fik wakha mabqinax kanhdro, kifax qdrtiii tsma7 fgaa3 hadxi o tsma7 fiya, tawahd maghayfkr fik kima kanfkr fik, tawahd maghaybghik kima bghitk, tawahd maghaykhaf 3lik kima kankhaf 3lik, tawahd maghayfhmk kima kanfhmk, o kan3rf eliik kolxi, kan3rf 3a2iltk wahd bwahd, dark kan3rfa bit b bit, qtot dyalk kan3rfom qt b qt, u told me about ur secrets, kan3rf ay haja 3lik ay haja katbghi w ay haja katkrah, aywahd li 3andk m3ah o li ma3ndkx m3ah, kifaax qdrti tsma7 fiya mn ba3d hadxiii kaml o mn ba3d youmayn mli bghiti txofni rja3ti ma7amlax fiya xa3ra, mafhmtx kifax o xno wqa3, and ig bli roeyat sbab maybe hitax s7abla overprotective like sohaib(mam2akdx ghir qolt o safii), o haydatli follow, walakin wakha hakak i don'y blame her , hitax katbqa khtk wghatbghiiilk diima lkhir, w i don't blame you too bcs u choose urself over me, and i don't force u to come back, i just shared with u this jst to express my feelings and clarify things for u bcs i hate to be misunderstood, and coding is the only thing m good at soo why not. Anywaaaay i will always love and i'll be by ur side everyday.
+      </div>
+
+      <!-- New inviting sentence below letter -->
+      <p class="invite-text">
+        Anyway ajannat, I have a cute gift for uu!
+      </p>
+
+      <!-- Stylish comfy marine blue button -->
+      <div class="memories-button-container">
+        <button class="memories-button" 
+          aria-label="qrsni ( bghit nqol click me hhh )"
+        >
+          qrsni ( bghit nqol click me hhh )
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const firstPage = document.getElementById("firstPage");
+    const secondPage = document.getElementById("secondPage");
+
+    const title = document.getElementById("mainTitle");
+    const dearLine = document.getElementById("dearLine");
+    const content = document.getElementById("content");
+    const paragraph = document.getElementById("fullParagraph");
+
+    const noButton = document.querySelector('.no-button');
+    const yesButton = document.querySelector('.yes-button');
+
+    const messages = [
+      "Please say yes, Foxaaa",
+      "I hope you say yes soon",
+      "Mat7xmx, say yes",
+      "7xoma elik",
+      "I’m waiting for your yes",
+      "Just one yes is all I need",
+      "Your yes means the world to me",
+      "Yalaaah, say yes!",
+      "Say yes and make me smile",
+      "I know you want to say yes"
+    ];
+
+    let messageIndex = 0;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Fade in the first page smoothly on load
+      setTimeout(() => {
+        firstPage.classList.add('fade-in');
+        console.log("First page faded in");
+      }, 100);
+
+      // Fix no button height to avoid jump
+      const computedHeight = window.getComputedStyle(noButton).height;
+      noButton.style.height = computedHeight;
+    });
+
+    noButton.addEventListener('click', () => {
+      noButton.textContent = messages[messageIndex];
+      messageIndex = (messageIndex + 1) % messages.length;
+
+      const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+      yesButton.style.fontSize = `${currentSize * 1.5}px`; // Grow yes button gradually
+      console.log("No button clicked, message changed");
+    });
+
+    yesButton.addEventListener('click', () => {
+      console.log("Yes button clicked");
+      // Fade out first page
+      firstPage.classList.add('fade-out');
+
+      // After fade out, hide first page and show second page
+      setTimeout(() => {
+        firstPage.style.display = 'none';
+        secondPage.classList.add('visible');
+        console.log("Second page shown");
+
+        // Animate second page texts (from second snippet)
+        title.classList.add("visible");
+        console.log("Title visible");
+
+        setTimeout(() => {
+          content.style.opacity = 1;
+          dearLine.classList.add("visible");
+          console.log("Dear line and content opacity set");
+        }, 2000);
+
+        setTimeout(() => {
+          paragraph.classList.add("visible");
+          console.log("Paragraph visible");
+        }, 3500);
+
+      }, 1500); // match fade-out duration in CSS
+    });
+
+    // Heart animation logic
+    const heartContainer = document.querySelector('.heart-container');
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.animationDuration = 4 + Math.random() * 3 + 's'; // 4-7 seconds
+      heart.style.opacity = 0.7 + Math.random() * 0.3;
+      heartContainer.appendChild(heart);
+
+      // Remove heart after animation completes
+      setTimeout(() => {
+        heart.remove();
+      }, 7000);
+    }
+
+    // Create hearts every 400ms
+    setInterval(createHeart, 400);
+
+    // <<<< Added event listener to 'qrsni' button to lead to html3.html
+    document.querySelector('.memories-button').addEventListener('click', () => {
+      window.location.href = 'html3.html';
+    });
+  </script>
+
+</body>
+</html>
