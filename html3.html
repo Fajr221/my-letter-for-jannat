@@ -308,6 +308,51 @@
       font-weight: normal;
       color: #eee;
     }
+
+    /* Added mobile-friendly tweaks for small screens (like Redmi 10A) */
+    @media (max-width: 480px) {
+      #startText {
+        font-size: 1.8rem;
+        white-space: normal;
+        padding: 0 15px;
+      }
+      .play-button {
+        width: 40px;
+        height: 40px;
+      }
+      .play-button svg {
+        width: 16px;
+        height: 16px;
+        margin-left: 0;
+      }
+      .spotify-header {
+        max-width: 90vw;
+        font-size: 14px;
+        padding: 6px 10px;
+        gap: 6px;
+      }
+      #finalScreen {
+        font-size: 2rem;
+        padding: 10px 15px;
+      }
+      .arrow {
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .arrow svg {
+        width: 16px;
+        height: 16px;
+      }
+      #memories {
+        width: 95%;
+        margin-top: 25px;
+      }
+      .paragraph {
+        font-size: 16px;
+        padding: 0 10px;
+      }
+    }
   </style>
 </head>
 <body>
